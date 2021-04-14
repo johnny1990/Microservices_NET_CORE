@@ -1,3 +1,5 @@
+using Contracts;
+using Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,7 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WebApi.Models;
+using Database;
 
 namespace WebApi
 {
@@ -35,8 +37,8 @@ namespace WebApi
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi", Version = "v1" });
             });
 
-            services.AddDbContext<MicroservicesContext>(
-                options => options.UseSqlServer(Configuration.GetConnectionString("MicroservicesConnection")));
+            services.AddDbContext<MicroservicesContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MicroservicesConnection")));
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         }
 
 
@@ -49,6 +51,10 @@ namespace WebApi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApi v1"));
             }
+            else
+            {
+                app.UseHsts();
+            }
 
             app.UseHttpsRedirection();
 
@@ -60,6 +66,9 @@ namespace WebApi
             {
                 endpoints.MapControllers();
             });
+
+        
         }
     }
-}
+    }
+
