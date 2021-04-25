@@ -39,6 +39,7 @@ namespace WebApi
 
             services.AddDbContext<MicroservicesContext>(options => options.UseSqlServer(Configuration.GetConnectionString("MicroservicesConnection")));
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         }
 
 
