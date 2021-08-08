@@ -25,27 +25,51 @@ namespace WebApi.Controllers
         [Route("GetEmployees")]
         public IActionResult GetEmployees()
         {
-            var emp = _empR.GetEmployees();
-            return new OkObjectResult(emp);
+            try
+            {
+                var emp = _empR.GetEmployees();
+                return new OkObjectResult(emp);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWriter.LogException(ex);
+                return NotFound();
+            }         
         }
 
         [HttpGet]
         [Route("GetEmployeeById")]
         public IActionResult GetEmployeeById(int id)
-        {
-            var emp = _empR.GetEmployeeById(id);
-            return new OkObjectResult(emp);
+        {            
+            try
+            {
+                var emp = _empR.GetEmployeeById(id);
+                return new OkObjectResult(emp);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWriter.LogException(ex);
+                return NotFound();
+            }
         }
 
         [HttpPost]
         [Route("InsertEmployee")]
         public IActionResult InsertEmployee([FromBody] Employees emp)
-        {
-            using (var scope = new TransactionScope())
+        {          
+            try
             {
-                _empR.InsertEmployee(emp);
-                scope.Complete();
-                return CreatedAtAction(nameof(GetEmployees), new { id = emp.Id }, emp);
+                using (var scope = new TransactionScope())
+                {
+                    _empR.InsertEmployee(emp);
+                    scope.Complete();
+                    return CreatedAtAction(nameof(GetEmployees), new { id = emp.Id }, emp);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWriter.LogException(ex);
+                return NotFound();
             }
         }
 
@@ -69,8 +93,16 @@ namespace WebApi.Controllers
         [Route("DeleteEmployee")]
         public IActionResult DeleteEmployee(int id)
         {
-            _empR.DeleteEmployee(id);
-            return new OkResult();
+            try
+            {
+                _empR.DeleteEmployee(id);
+                return new OkResult();
+            }
+             catch (Exception ex)
+            {
+                Logger.LogWriter.LogException(ex);
+                return NotFound();
+            }
         }
     }
 }

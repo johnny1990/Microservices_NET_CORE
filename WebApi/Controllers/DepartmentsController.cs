@@ -25,27 +25,52 @@ namespace WebApi.Controllers
         [Route("GetDepartments")]
         public IActionResult GetDepartments()
         {
-            var dep = _depR.GetDepartments();
-            return new OkObjectResult(dep);
+            try
+            {
+                var dep = _depR.GetDepartments();
+                return new OkObjectResult(dep);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWriter.LogException(ex);
+                return NotFound();
+            }
         }
 
         [HttpGet]
         [Route("GetDepartmentById")]
         public IActionResult GetDepartmentById(int id)
         {
-            var dep = _depR.GetDepartmentById(id);
-            return new OkObjectResult(dep);
+            try
+            {
+                var dep = _depR.GetDepartmentById(id);
+                return new OkObjectResult(dep);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWriter.LogException(ex);
+                return NotFound();
+            }
         }
 
         [HttpPost]
         [Route("InsertDepartment")]
         public IActionResult InserDepartment([FromBody] Departments dep)
         {
-            using (var scope = new TransactionScope())
+            
+            try
             {
-                _depR.InsertDepartment(dep);
-                scope.Complete();
-                return CreatedAtAction(nameof(GetDepartments), new { id = dep.Id }, dep);
+                using (var scope = new TransactionScope())
+                {
+                    _depR.InsertDepartment(dep);
+                    scope.Complete();
+                    return CreatedAtAction(nameof(GetDepartments), new { id = dep.Id }, dep);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWriter.LogException(ex);
+                return NotFound();
             }
         }
 
@@ -68,9 +93,17 @@ namespace WebApi.Controllers
         [HttpDelete]
         [Route("DeleteEmployee")]
         public IActionResult DeleteDepartment(int id)
-        {
-            _depR.DeleteDepartment(id);
-            return new OkResult();
+        {            
+            try
+            {
+                _depR.DeleteDepartment(id);
+                return new OkResult();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWriter.LogException(ex);
+                return NotFound();
+            }
         }
     }
 }
