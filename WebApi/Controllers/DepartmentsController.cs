@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities;
+using Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -25,15 +26,22 @@ namespace WebApi.Controllers
         [Route("GetDepartments")]
         public IActionResult GetDepartments()
         {
+            ResponseType type = ResponseType.Success;
+
             try
             {
                 var dep = _depR.GetDepartments();
-                return new OkObjectResult(dep);
+                if (!dep.Any())
+                {
+                    type = ResponseType.NotFound;
+                }
+
+                return Ok(ResponseHandler.GetAppResponse(type, dep));
             }
             catch (Exception ex)
             {
                 Logger.LogWriter.LogException(ex);
-                return NotFound();
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
 
@@ -41,36 +49,43 @@ namespace WebApi.Controllers
         [Route("GetDepartmentById")]
         public IActionResult GetDepartmentById(int id)
         {
+            ResponseType type = ResponseType.Success;
+
             try
             {
                 var dep = _depR.GetDepartmentById(id);
-                return new OkObjectResult(dep);
+                if (dep == null)
+                {
+                    type = ResponseType.NotFound;
+                }
+
+                return Ok(ResponseHandler.GetAppResponse(type, dep));
             }
             catch (Exception ex)
             {
                 Logger.LogWriter.LogException(ex);
-                return NotFound();
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
 
         [HttpPost]
         [Route("InsertDepartment")]
         public IActionResult InserDepartment([FromBody] Departments dep)
-        {
-            
+        {           
             try
             {
                 using (var scope = new TransactionScope())
                 {
+                    ResponseType type = ResponseType.Success;
                     _depR.InsertDepartment(dep);
                     scope.Complete();
-                    return CreatedAtAction(nameof(GetDepartments), new { id = dep.Id }, dep);
+                    return Ok(ResponseHandler.GetAppResponse(type, dep));
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogWriter.LogException(ex);
-                return NotFound();
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
 
@@ -82,9 +97,10 @@ namespace WebApi.Controllers
             {
                 using (var scope = new TransactionScope())
                 {
+                    ResponseType type = ResponseType.Success;
                     _depR.UpdateDepartment(dep);
                     scope.Complete();
-                    return new OkResult();
+                    return Ok(ResponseHandler.GetAppResponse(type, dep));
                 }
             }
             return new NoContentResult();
@@ -96,13 +112,14 @@ namespace WebApi.Controllers
         {            
             try
             {
+                ResponseType type = ResponseType.Success;
                 _depR.DeleteDepartment(id);
-                return new OkResult();
+                return Ok(ResponseHandler.GetAppResponse(type, "Delete Successfully"));
             }
             catch (Exception ex)
             {
                 Logger.LogWriter.LogException(ex);
-                return NotFound();
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
     }

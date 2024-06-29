@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities;
+using Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WebApi.Controllers
 {
@@ -25,31 +27,48 @@ namespace WebApi.Controllers
         [Route("GetEmployees")]
         public IActionResult GetEmployees()
         {
+            ResponseType type = ResponseType.Success;
+
             try
             {
                 var emp = _empR.GetEmployees();
-                return new OkObjectResult(emp);
+
+                if (!emp.Any())
+                {
+                    type = ResponseType.NotFound;
+                }
+
+                return Ok(ResponseHandler.GetAppResponse(type, emp));
             }
             catch (Exception ex)
             {
                 Logger.LogWriter.LogException(ex);
-                return NotFound();
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }         
         }
 
         [HttpGet]
         [Route("GetEmployeeById")]
         public IActionResult GetEmployeeById(int id)
-        {            
+        {
+            ResponseType type = ResponseType.Success;
+
             try
             {
                 var emp = _empR.GetEmployeeById(id);
-                return new OkObjectResult(emp);
+
+                if (emp == null)
+                {
+                    type = ResponseType.NotFound;
+                }
+
+                return Ok(ResponseHandler.GetAppResponse(type, emp));
+
             }
             catch (Exception ex)
             {
                 Logger.LogWriter.LogException(ex);
-                return NotFound();
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
 
@@ -61,15 +80,16 @@ namespace WebApi.Controllers
             {
                 using (var scope = new TransactionScope())
                 {
+                    ResponseType type = ResponseType.Success;
                     _empR.InsertEmployee(emp);
                     scope.Complete();
-                    return CreatedAtAction(nameof(GetEmployees), new { id = emp.Id }, emp);
+                    return Ok(ResponseHandler.GetAppResponse(type, emp));
                 }
             }
             catch (Exception ex)
             {
                 Logger.LogWriter.LogException(ex);
-                return NotFound();
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
 
@@ -81,9 +101,10 @@ namespace WebApi.Controllers
             {
                 using (var scope = new TransactionScope())
                 {
+                    ResponseType type = ResponseType.Success;
                     _empR.UpdateEmployee(emp);
                     scope.Complete();
-                    return new OkResult();
+                    return Ok(ResponseHandler.GetAppResponse(type, emp));
                 }
             }
             return new NoContentResult();
@@ -95,13 +116,14 @@ namespace WebApi.Controllers
         {
             try
             {
+                ResponseType type = ResponseType.Success;
                 _empR.DeleteEmployee(id);
-                return new OkResult();
+                return Ok(ResponseHandler.GetAppResponse(type, "Delete Successfully"));
             }
              catch (Exception ex)
             {
                 Logger.LogWriter.LogException(ex);
-                return NotFound();
+                return BadRequest(ResponseHandler.GetExceptionResponse(ex));
             }
         }
     }
