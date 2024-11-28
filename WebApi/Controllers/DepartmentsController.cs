@@ -1,12 +1,10 @@
 ﻿using Contracts;
 using Entities;
 using Helpers;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Transactions;
 
 namespace WebApi.Controllers
@@ -24,6 +22,7 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("GetDepartments")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult GetDepartments()
         {
             ResponseType type = ResponseType.Success;
@@ -47,6 +46,7 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("GetDepartmentById")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult GetDepartmentById(int id)
         {
             ResponseType type = ResponseType.Success;
@@ -70,6 +70,7 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [Route("InsertDepartment")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult InserDepartment([FromBody] Departments dep)
         {           
             try
@@ -91,6 +92,7 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Route("UpdateDepartment")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult UpdateDepartment([FromBody] Departments dep)
         {
             if (dep != null)
@@ -108,6 +110,7 @@ namespace WebApi.Controllers
 
         [HttpDelete]
         [Route("DeleteEmployee")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult DeleteDepartment(int id)
         {            
             try
