@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities;
 using Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -25,6 +26,7 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("GetEmployees")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult GetEmployees()
         {
             ResponseType type = ResponseType.Success;
@@ -49,6 +51,7 @@ namespace WebApi.Controllers
 
         [HttpGet]
         [Route("GetEmployeeById")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult GetEmployeeById(int id)
         {
             ResponseType type = ResponseType.Success;
@@ -74,6 +77,7 @@ namespace WebApi.Controllers
 
         [HttpPost]
         [Route("InsertEmployee")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult InsertEmployee([FromBody] Employees emp)
         {          
             try
@@ -95,6 +99,7 @@ namespace WebApi.Controllers
 
         [HttpPut]
         [Route("UpdateEmployee")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult UpdateEmployee([FromBody] Employees emp)
         {
             if (emp != null)
@@ -112,6 +117,7 @@ namespace WebApi.Controllers
 
         [HttpDelete]
         [Route("DeleteEmployee")]
+        [Authorize(AuthenticationSchemes = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)]
         public IActionResult DeleteEmployee(int id)
         {
             try
